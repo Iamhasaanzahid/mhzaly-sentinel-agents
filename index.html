@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MHZALY Sentinel - Virtual Agent Office</title>
+    <style>
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #00ffa6; font-size: 28px; }
+        .office-room { display: flex; justify-content: space-around; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 20px; }
+        .desk { background: #21262d; padding: 15px; border-radius: 8px; width: 28%; text-align: center; border-top: 4px solid #00ffa6; }
+        .control-panel { background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
+        input, button { padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #30363d; margin-top: 10px; }
+        input { background: #0d1117; color: #fff; width: 70%; }
+        button { background: #238636; color: #fff; cursor: pointer; font-weight: bold; width: 25%; }
+        button:hover { background: #2ea043; }
+        .logs-box { margin-top: 20px; background: #0d1117; padding: 15px; border-radius: 5px; border: 1px solid #30363d; min-height: 100px; font-family: monospace; }
+        .log-item { color: #58a6ff; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🛡️ MHZALY Sentinel Agents: Virtual Office</h1>
+        <p>Autonomous AI Multi-Agent Command Center</p>
+    </div>
+
+    <div class="office-room">
+        <div class="desk">
+            <h3>👨‍💼 Manager Agent</h3>
+            <p>Status: <span style="color: #00ffa6;">Active</span></p>
+            <small>Coordinates workflow & plans strategy.</small>
+        </div>
+        <div class="desk">
+            <h3>🔍 SOC Analyst</h3>
+            <p>Status: <span style="color: #00ffa6;">Active</span></p>
+            <small>Scans threat intel & logs.</small>
+        </div>
+        <div class="desk">
+            <h3>⚡ Executor Agent</h3>
+            <p>Status: <span style="color: #00ffa6;">Active</span></p>
+            <small>Compiles response & defense.</small>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <h3>💻 Command Console</h3>
+        <input type="text" id="taskInput" placeholder="Enter task for the office team (e.g., Analyze network security logs)...">
+        <button onclick="runWorkflow()">Launch Team</button>
+        
+        <div class="logs-box" id="logsOutput">
+            <span style="color: #8b949e;">Office agents are waiting for your command...</span>
+        </div>
+    </div>
+
+    <script>
+        async function runWorkflow() {
+            const task = document.getElementById('taskInput').value;
+            const outputBox = document.getElementById('logsOutput');
+            
+            if(!task) {
+                alert('Please enter a task first!');
+                return;
+            }
+
+            outputBox.innerHTML = '<div style="color: #f0883e;">🚀 Initializing office agents and establishing neural link...</div>';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/run-workflow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task: task })
+                });
+                
+                const data = await response.json();
+                if(data.status === 'success') {
+                    outputBox.innerHTML = '';
+                    data.logs.forEach(log => {
+                        outputBox.innerHTML += `<div class="log-item">> ${log}</div>`;
+                    });
+                    outputBox.innerHTML += `<div style="color: #00ffa6; margin-top: 10px;"><b>✔ ${data.summary}</b></div>`;
+                }
+            } catch (error) {
+                outputBox.innerHTML = `<div style="color: #ff7b72;">❌ Error connecting to backend server: Make sure FastAPI (`app.py`) is running.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
